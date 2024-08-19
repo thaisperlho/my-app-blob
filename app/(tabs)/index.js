@@ -4,6 +4,9 @@ import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 export default function HomeScreen() {
@@ -20,9 +23,9 @@ export default function HomeScreen() {
 
     if (!result.canceled) {
         const uri = result.assets[0].uri;
-        setImage(uri);
         const userUri = await uploadImage(uri);
         console.info("Setando imagem" + userUri);
+        setImage(userUri);
     }
 };
 
@@ -40,7 +43,8 @@ const uploadImage = async (uri) => {
       const mimeType = "image/" + extension;
 
       // Gera um novo nome para o arquivo
-      const newFileName = "foto" + '.' + extension;
+      const fileId = uuidv4() || 'invalid-file-id';
+      const newFileName = fileId + '.' + extension;
       console.log("info: " + newFileName);
       const signedUrl = `${baseUrl}/${newFileName}?${sasToken}`;
 
@@ -73,7 +77,7 @@ const uploadImage = async (uri) => {
   
     return (
       <View style={styles.container}>
-        <Button title="Pick an image from camera roll" onPress={pickImage} />
+        <Button title="Escolha uma imagem" onPress={pickImage} style={styles.button}  />
         {image && <Image source={{ uri: image }} style={styles.image} />}
       </View>
     );
@@ -91,5 +95,9 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     marginVertical: 20,
+  },
+  button: {
+    marginVertical: 20,
+    backgroundColor: 'blue',
   },
 });
